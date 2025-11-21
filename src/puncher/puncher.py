@@ -186,7 +186,7 @@ class PunchcardSVG():
                                           hole_coord_y,
                                           class_ : str | None = None, 
                                           fill : str = "transparent", 
-                                          stroke : str = "red") -> svg.Element:
+                                          stroke : str | None = None) -> svg.Element:
         # print(f" row {row} index {rindex}, col {col}, index {cindex}")
         # we draw the cardpunch hole at the bottom left coordinate of the character cell
         col_location, row_location = self._character_cell_location_for_punch(hole_coord_x, hole_coord_y)
@@ -212,14 +212,14 @@ class PunchcardSVG():
         # #996633; is IBM punchcard printed brown
         return svg.Style(
                 text=dedent(f"""
-                    body {{ background-color: #ffffff; }}
+                    #wrapper_doc {{ background-color: #ffffff; }}
                     .collabel {{ font-size: 0.004em; font-family: monospace; fill: #996633; }}
                     .numlabel {{ font-size: 0.007em; font-family: monospace; fill: #996633; }}
                     .cardchar {{ font-size: 0.007em; font-family: monospace; fill: black; }}
                     .card_manufacturer_label  {{ font-size: 0.004em; font-family: sans-serif; fill: green;}}
                     .cardnotes {{ font-size: 0.004em; font-family: sans-serif; fill: green;}}
                     .cardpunch_boundary {{ stroke: {PunchcardSVG.STROKE_COLOR_CUTLINES}; fill: transparent; stroke-width: {PunchcardSVG.STROKE_WEIGHT_1PT_IN}; }}
-                    .cardpunch_hole_boundaries {{ stroke: {PunchcardSVG.STROKE_COLOR_HOLE_BOUNDARIES}; fill: transparent; stroke-width: {PunchcardSVG.STROKE_WEIGHT_1PT_IN}; }}
+                    .cardpunch_hole_boundary {{ stroke: {PunchcardSVG.STROKE_COLOR_HOLE_BOUNDARIES}; fill: transparent; stroke-width: {PunchcardSVG.STROKE_WEIGHT_1PT_IN}; }}
                 """
                 ),
             )
@@ -246,9 +246,9 @@ class PunchcardSVG():
         for rindex, row in enumerate(PunchcardSVG.CARD_HOLE_ROW_NUMBERING):
             for cindex, col in enumerate(PunchcardSVG.CARD_HOLE_COLUMN_NUMBERING):
                 # logger.debug(f"Drawing punchcard row={row} rindex={rindex} col={col}, colindex={cindex}")
-                card_holes.append(self._draw_cardpunch_hole_by_holecoord(col, row, class_="cardpunch_hole_boundaries"))
+                card_holes.append(self._draw_cardpunch_hole_by_holecoord(col, row, class_="cardpunch_hole_boundary"))
                 
-        return svg.G(id="cardpunch_hole_boundaries", elements=card_holes) 
+        return svg.G(id="cardpunch_hole_boundary", elements=card_holes) 
 
     def _draw_punchcard_column_label(self, row : int, col : int) -> svg.Element:
         colnumber = col + 1
@@ -304,7 +304,8 @@ class PunchcardSVG():
         return [self._draw_cardpunch_hole_by_holecoord(columnname, rowname, fill="blue", stroke="blue")]
 
     def _draw_cardpunch_cutboundary(self, rowname : str, columnname: str) -> list[svg.Element]:
-        return []
+        return [self._draw_cardpunch_hole_by_holecoord(columnname, rowname, class_="cardpunch_boundary", fill="transparent", stroke="blue")]
+
 
     def _draw_cardpunch_column_punches(self, character : str, columnname : str) -> list[svg.Element]:
         punch_rows = PunchcardSVG.EBCD_PUNCH_RULES.get(character, [])        
@@ -312,7 +313,7 @@ class PunchcardSVG():
 
         for rowname in punch_rows:
             column_elements.extend(self._draw_cardpunch_cutboundary(rowname, columnname))
-            column_elements.extend(self._draw_cardpunch_printblock(rowname, columnname))
+            #column_elements.extend(self._draw_cardpunch_printblock(rowname, columnname))
             
         return column_elements
 
@@ -374,13 +375,17 @@ class PunchcardSVG():
                                                     card_column_number_labels, 
                                                     card_content_column_labels,
                                                     card_manufacturer_label])
-        card_g : svg.G = svg.G(id="",
-                               class_="", 
+        card_g : svg.G = svg.G(id="punchcard",
+                               class_="punchcard", 
                                elements=[ card_printed_material_g,
                                           card_structure_and_notes_g, 
                                           cut_lines_g ],
                                transform=f"translate({PunchcardSVG.DOCUMENT_MARGIN_LEFT_IN}, {PunchcardSVG.DOCUMENT_MARGIN_TOP_IN})" )
-        wrapper_doc_g : svg.G = svg.G(id="", class_="", elements=[card_g])
+        wrapper_doc_g : svg.G = svg.G(id="wrapper_doc", 
+                                      elements=[card_g],
+                                    #   width=PunchcardSVG.DOCUMENT_WIDTH_IN,
+                                    #   height=PunchcardSVG.DOCUMENT_HEIGHT_IN,
+                                      )
 
         return svg.SVG(width=str(PunchcardSVG.DOCUMENT_WIDTH_IN) +"in", 
                       height=str(PunchcardSVG.DOCUMENT_HEIGHT_IN) +"in",
