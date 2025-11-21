@@ -11,16 +11,19 @@ The 3LE for ISS looks like:
 The examples produce one card for each line:
 
 **Line 0** ([svg source](iss_tle_0.svg))
+
 ![ISS TLE Line 0](iss_tle_0.png "ISS TLE Line 0")
 
 **Line 1** ([svg source](iss_tle_1.svg))
+
 ![ISS TLE Line 1](iss_tle_1.png "ISS TLE Line 1")
 
 **Line 2** ([svg source](iss_tle_2.svg))
+
 ![ISS TLE Line 2](iss_tle_2.png "ISS TLE Line 2")
 
 ## Test Pattern and Character Set
 
 **Test Patttern / Character Set** ([svg source](charset.svg))
-![Test Pattern](charset.png "Test Pattern Character Set")
 
+![Test Pattern](charset.png "Test Pattern Character Set")
