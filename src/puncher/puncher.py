@@ -382,8 +382,8 @@ class PunchcardSVG():
                       viewBox=svg.ViewBoxSpec(0, 0, PunchcardSVG.DOCUMENT_WIDTH_IN, PunchcardSVG.DOCUMENT_HEIGHT_IN)
                       )
 
-if __name__ == "__main__":
-    logger.info("Running punchbugger")
-    pc = PunchcardSVG("FOO /=+& 123")
-    svgout = pc.makesvg()
-    print(svgout)
+# if __name__ == "__main__":
+#     logger.info("Running punchbugger")
+#     pc = PunchcardSVG("FOO /=+& 123")
+#     svgout = pc.makesvg()
+#     print(svgout)

@@ -21,7 +21,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.testpattern:
-        content = "&-0123456789ABCDEFGHIJKLMNOPQR/STUVWXYZ:#@'=\"[.<(+|]$*);^\,%_>?"
+        content = "&-0123456789ABCDEFGHIJKLMNOPQR/STUVWXYZ:#@'=\"[.<(+|]$*);^\\,%_>?"
     else: 
         content = args.cstring
     logger.info(f"creating punchcard with content: \"{content}\"")
@@ -40,4 +40,4 @@ if __name__ == "__main__":
         png_filename = args.out + ".png"
         logger.info(f"writing to \"{png_filename}\"")
         svg_stream = io.StringIO(svg_content.as_str())
-        cairosvg.svg2png(file_obj=svg_stream, write_to=png_filename)
+        cairosvg.svg2png(file_obj=svg_stream, write_to=png_filename,background_color="white")
