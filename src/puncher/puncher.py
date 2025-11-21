@@ -4,6 +4,8 @@ import logging
 from typing import Callable
 from textwrap import dedent
 
+# https://homepage.divms.uiowa.edu/~jones/cards/codes.html
+
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("PunchcardSVG")
 
