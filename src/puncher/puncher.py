@@ -212,6 +212,7 @@ class PunchcardSVG():
         # #996633; is IBM punchcard printed brown
         return svg.Style(
                 text=dedent(f"""
+                    body {{ background-color: #ffffff; }}
                     .collabel {{ font-size: 0.004em; font-family: monospace; fill: #996633; }}
                     .numlabel {{ font-size: 0.007em; font-family: monospace; fill: #996633; }}
                     .cardchar {{ font-size: 0.007em; font-family: monospace; fill: black; }}
