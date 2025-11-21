@@ -3,6 +3,9 @@ import svg
 import logging
 from typing import Callable
 from textwrap import dedent
+from pathlib import Path
+import io
+import cairosvg
 
 # https://homepage.divms.uiowa.edu/~jones/cards/codes.html
 
@@ -205,10 +208,12 @@ class PunchcardSVG():
         return punch_rectangle
 
     def _define_card_style(self) -> svg.Style:
+        
+        # #996633; is IBM punchcard printed brown
         return svg.Style(
                 text=dedent(f"""
-                    .collabel {{ font-size: 0.003em; font-family: monospace; fill: black; }}
-                    .numlabel {{ font-size: 0.007em; font-family: monospace; fill: black; }}
+                    .collabel {{ font-size: 0.004em; font-family: monospace; fill: #996633; }}
+                    .numlabel {{ font-size: 0.007em; font-family: monospace; fill: #996633; }}
                     .cardchar {{ font-size: 0.007em; font-family: monospace; fill: black; }}
                     .card_manufacturer_label  {{ font-size: 0.004em; font-family: sans-serif; fill: green;}}
                     .cardnotes {{ font-size: 0.004em; font-family: sans-serif; fill: green;}}
@@ -370,7 +375,9 @@ class PunchcardSVG():
                                                     card_manufacturer_label])
         card_g : svg.G = svg.G(id="",
                                class_="", 
-                               elements=[cut_lines_g, card_structure_and_notes_g, card_printed_material_g ],
+                               elements=[ card_printed_material_g,
+                                          card_structure_and_notes_g, 
+                                          cut_lines_g ],
                                transform=f"translate({PunchcardSVG.DOCUMENT_MARGIN_LEFT_IN}, {PunchcardSVG.DOCUMENT_MARGIN_TOP_IN})" )
         wrapper_doc_g : svg.G = svg.G(id="", class_="", elements=[card_g])
 
@@ -381,9 +388,24 @@ class PunchcardSVG():
                                 ], 
                       viewBox=svg.ViewBoxSpec(0, 0, PunchcardSVG.DOCUMENT_WIDTH_IN, PunchcardSVG.DOCUMENT_HEIGHT_IN)
                       )
+    
+def writesvg(svg_content : svg.SVG, path : Path, stem : str) -> None:
+    """ Write an svg.SVG to an svg file, at the path specified, 
+        with the name [stem].svg
+    """
+    svg_filename = path / (stem + ".svg")
+    logger.info(f"writing to \"{svg_filename}\"")
 
-# if __name__ == "__main__":
-#     logger.info("Running punchbugger")
-#     pc = PunchcardSVG("FOO /=+& 123")
-#     svgout = pc.makesvg()
-#     print(svgout)
+    with open(svg_filename, "w") as svg_file:
+        print(svg_content, file=svg_file)
+
+def writepng(svg_content : svg.SVG, path : Path, stem : str, dpi : float = 600):
+    """ Write an svg.SVG to a PNG file using cairosvg
+    """
+    png_filename = path / (stem + ".png")
+    logger.info(f"writing to \"{png_filename}\"")
+    svg_stream = io.StringIO(svg_content.as_str())
+    cairosvg.svg2png(file_obj=svg_stream, 
+                     write_to=str(png_filename),
+                     background_color="white",
+                     scale = 5)

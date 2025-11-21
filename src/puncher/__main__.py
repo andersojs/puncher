@@ -2,8 +2,9 @@ import argparse
 import logging
 import cairosvg
 import io
+from pathlib import Path
 
-from puncher.puncher import PunchcardSVG
+from puncher.puncher import PunchcardSVG, writepng, writesvg
 
 logging.basicConfig(level = logging.INFO)
 logger = logging.getLogger('puncher')
@@ -30,14 +31,7 @@ if __name__ == "__main__":
     svg_content = ps.makesvg()
 
     if 'svg' in args.form:
-        svg_filename = args.out + ".svg"
-        logger.info(f"writing to \"{svg_filename}\"")
-
-        with open(svg_filename, "w") as svg_file:
-            print(svg_content, file=svg_file)
+        writesvg(svg_content=svg_content,path=Path('.'), stem=args.out)
 
     if 'png' in args.form:
-        png_filename = args.out + ".png"
-        logger.info(f"writing to \"{png_filename}\"")
-        svg_stream = io.StringIO(svg_content.as_str())
-        cairosvg.svg2png(file_obj=svg_stream, write_to=png_filename,background_color="white")
+        writepng(svg_content=svg_content,path=Path('.'), stem=args.out)
