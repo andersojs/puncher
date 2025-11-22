@@ -23,6 +23,7 @@ The examples produce one card for each line:
 ![ISS TLE Line 2](iss_tle_2.png "ISS TLE Line 2")
 
 ## Test Pattern and Character Set
+```$ uv run python -m puncher --form svg --form png --out charset --testpattern +cellboundaries +punchboundaries +printpunch```
 
 **Test Patttern / Character Set** ([svg source](charset.svg))
 
