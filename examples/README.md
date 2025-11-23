@@ -12,7 +12,16 @@ The examples produce one card for each line:
 
 **Line 0** ([svg source](iss_tle_0.svg))
 
+    uv run python -m puncher --form svg --form png --out iss_tle_0 --cstring "${TLE_STRING_0}"
+    uv run python -m puncher --form svg --out iss_tle_0_flat +flatten --cstring "${TLE_STRING_0}"
+
+PNG Version:
+
 ![ISS TLE Line 0](iss_tle_0.png "ISS TLE Line 0")
+
+Flattened SVG:
+![ISS TLE Line 0](iss_tle_0_flat.svg "ISS TLE Line 0 SVG")
+
 
 **Line 1** ([svg source](iss_tle_1.svg))
 

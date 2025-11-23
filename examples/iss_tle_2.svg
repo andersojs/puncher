@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8.375 4.25" width="8.375in" height="4.25in"><style>
-#wrapper_doc { background-color: #ffffff; }
+svg { background-color: #ffffff; }
 .collabel { font-size: 0.004em; font-family: monospace; fill: #996633; }
 .numlabel { font-size: 0.007em; font-family: monospace; fill: #996633; }
 .cardchar { font-size: 0.007em; font-family: monospace; fill: black; }
