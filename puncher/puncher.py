@@ -382,50 +382,6 @@ class PunchcardSVG():
         self._card_manufacturer_label : svg.G = None
         self._makesvg_content()
 
-    def _make_printed_raster(self,
-                flatten_printed_material : bool = False,
-                print_cellboundaries : bool = False,
-                print_punchboundaries: bool = False,
-                print_punchboxes : bool = True ):
-        
-        structure_elements = []
-        if print_cellboundaries: 
-            logger.debug(f"makesvg: including _card_character_cells_g is a group with {len(self._card_character_cells_g.elements)}")
-            structure_elements.append(self._card_character_cells_g)
-        if print_punchboundaries: structure_elements.append(self._card_punch_boundaries_g) 
-        
-        card_structure_and_notes_g : svg.G = svg.G(
-            id="punchcard_structure", 
-            elements=structure_elements)
-        
-        print_elements = []
-        print_elements.append(self._card_row_number_labels)
-        print_elements.append(self._card_column_number_labels)
-        print_elements.append(self._card_content_column_labels)
-        print_elements.append(self._card_manufacturer_label)
-
-        card_printed_material_g = svg.G(
-            id="card_printed", 
-            elements=print_elements)
-        card_layers = []
-        card_layers.append(self._card_style)
-        card_layers.append(card_printed_material_g)
-        card_layers.append(card_structure_and_notes_g)
-        
-        printsvg = svg.SVG(width=str(PunchcardSVG.CARD_DIM_WIDTH_IN) +"in", 
-                height=str(PunchcardSVG.CARD_DIM_LENGTH_IN) +"in",
-                elements=card_layers,
-                viewBox=svg.ViewBoxSpec(0, 0, 
-                                        PunchcardSVG.CARD_DIM_WIDTH_IN, 
-                                        PunchcardSVG.CARD_DIM_LENGTH_IN))
-        svg_stream = io.StringIO(printsvg.as_str())
-        png_bytes = cairosvg.svg2png(file_obj=svg_stream, 
-                                     background_color="white",
-                                     scale = 5)
-        png_base64_bytes = base64.b64encode(png_bytes)
-        png_base64_string = png_base64_bytes.decode('utf-8')
-        return png_base64_string
-
     def makesvg(self, 
                 flatten_printed_material : bool = False,
                 print_cellboundaries : bool = False,
@@ -439,15 +395,9 @@ class PunchcardSVG():
                      f"\n\tprint_punchboundaries = \"{print_punchboundaries}\"")
         
         # We will construct the SVG in groups representing layers
-        
-        # - wrapper document
-        # - the card itself
-        #   - cut lines (cut)
-        #     - card boundary
-        #     - punched holes
-        #   - card structure and notes (printed) that don't correspond to a production card
-        #     - column number labels
-        #.  - card printed material (printed) that would appear on a printed card
+
+        card_layers = []
+        card_layers.append(self._card_style)
 
         document_transform = f"translate({PunchcardSVG.DOCUMENT_MARGIN_LEFT_IN}, {PunchcardSVG.DOCUMENT_MARGIN_TOP_IN})"
 
@@ -464,35 +414,38 @@ class PunchcardSVG():
             structure_elements.append(self._card_character_cells_g)
         if print_punchboundaries: structure_elements.append(self._card_punch_boundaries_g) 
         
-        card_structure_and_notes_g : svg.G = svg.G(
-            transform=document_transform, 
-            id="punchcard_structure", 
-            elements=structure_elements)
-        
         print_elements = []
         print_elements.append(self._card_row_number_labels)
         print_elements.append(self._card_column_number_labels)
         print_elements.append(self._card_content_column_labels)
         print_elements.append(self._card_manufacturer_label)
 
-        card_printed_material_g = svg.G(
-            transform=document_transform, 
-            id="card_printed", 
-            elements=print_elements)
-        
-        card_layers = []
-        card_layers.append(self._card_style)
-
         if flatten_printed_material:
-            printed_png_bas64_string = self._make_printed_raster(flatten_printed_material=flatten_printed_material,
-                                                                 print_cellboundaries=print_cellboundaries,
-                                                                 print_punchboxes=print_punchboxes,
-                                                                 print_punchboundaries=print_punchboundaries)
+            card_structure_and_notes_g : svg.G = svg.G(
+                id="punchcard_structure", 
+                elements=structure_elements)
+            
+            card_printed_material_g = svg.G( 
+                id="card_printed", 
+                elements=print_elements)
+                        
+            printsvg = svg.SVG(width=str(PunchcardSVG.CARD_DIM_WIDTH_IN) +"in", 
+                height=str(PunchcardSVG.CARD_DIM_LENGTH_IN) +"in",
+                elements=[self._card_style, card_printed_material_g,card_structure_and_notes_g],
+                viewBox=svg.ViewBoxSpec(0, 0, 
+                                        PunchcardSVG.CARD_DIM_WIDTH_IN, 
+                                        PunchcardSVG.CARD_DIM_LENGTH_IN))
+            svg_stream = io.StringIO(printsvg.as_str())
+            png_bytes = cairosvg.svg2png(file_obj=svg_stream, 
+                                        background_color="white",
+                                        scale = 5)
+            png_base64_bytes = base64.b64encode(png_bytes)
+            png_base64_string = png_base64_bytes.decode('utf-8')
             flattened_image = svg.Image(
                 width=PunchcardSVG.CARD_DIM_WIDTH_IN, 
                 height=PunchcardSVG.CARD_DIM_LENGTH_IN,
                 id="flattened_print",
-                href="data:image/png;base64,"+printed_png_bas64_string
+                href="data:image/png;base64,"+png_base64_string
             )
             flattened_g = svg.G(
                 transform=document_transform, 
@@ -500,6 +453,15 @@ class PunchcardSVG():
                 elements=[flattened_image])
             card_layers.append(flattened_g)
         else:
+            card_structure_and_notes_g : svg.G = svg.G(
+                transform=document_transform, 
+                id="punchcard_structure", 
+                elements=structure_elements)
+            card_printed_material_g = svg.G(
+                transform=document_transform, 
+                id="card_printed", 
+                elements=print_elements)
+
             card_layers.append(card_printed_material_g)
             card_layers.append(card_structure_and_notes_g)
 

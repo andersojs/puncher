@@ -1,5 +1,5 @@
 #!/bin/bash
-export PYTHONPATH=../src
+export PYTHONPATH=..
 export DYLD_LIBRARY_PATH=/opt/homebrew/lib
 
 
