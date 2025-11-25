@@ -72,11 +72,14 @@ a punchcard image in SVG suitable for cutting on a Circut or Sihouette cutting m
 ## Development
 
 Getting started
+
+    brew install cairo
     git clone git@github.com:andersojs/puncher.git
     cd puncher
-    uv sync
-    uv pip install -e .
-    uv run python -m puncher
+    export DYLD_LIBRARY_PATH=/opt/homebrew/lib  # I need this on the mac to find cairosvg
+    uv sync                                     # Set up local environment, venv
+    uv pip install -e .                         # Needed to run from current working dev dir
+    uv run puncher 
 
 Build sdist and wheel packages (into `dist/`)
 
