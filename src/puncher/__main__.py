@@ -14,8 +14,35 @@ from puncher.puncher import PunchcardSVG, writepng, writesvg
 logger = logging.getLogger('puncher')
 colorama.init()
 
-def _console_message(message : str):
-    print("["+Fore.GREEN+"PUNCHER"+Style.RESET_ALL+f"] {message}",file=sys.stderr)
+def test_cairosvg() -> bool:
+    try:
+        import cairosvg
+    except OSError as e:
+        print(f"An OS error occurred during import: {e}, please make sure CairoSVG is installed and on the dynamic library path.", file=sys.stderr)
+        print(f"On Mac with cairosvg installed using Homebrew, I need:\nxport DYLD_LIBRARY_PATH=/opt/homebrew/lib", file=sys.stderr)
+        # You can add specific handling logic here,
+        # such as providing a fallback or logging the error.
+        return False
+    except ImportError as e:
+        print(f"An import error occurred: {e}")
+        # Handle cases where the module simply isn't found
+        return False
+    except Exception as e:
+        print(f"An unexpected error occurred during import: {e}")
+        # Catch any other unforeseen exceptions
+        return False
+    return True
+
+
+def _console_message(message : str, type="PUNCHER"):
+    if type == "PUNCHER":
+        color = Fore.GREEN
+    elif type == "ERROR":
+        color = Fore.RED
+    else:
+        color = Fore.WHITE
+
+    print("["+color+type+Style.RESET_ALL+f"] {message}",file=sys.stderr)
     logger.info(message)
 
 def _switches(args : argparse.Namespace) -> str:
@@ -86,6 +113,10 @@ def main():
         logger.setLevel(debug_level)
 
     args = parser.parse_args()
+
+    if not test_cairosvg():
+        _console_message("Failure loading cairosvg library", type='ERROR')
+
 
     logger.info("puncher start")
     if args.testpattern:

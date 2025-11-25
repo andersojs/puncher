@@ -26,6 +26,7 @@ import base64
 
 logger = logging.getLogger("puncher")
 
+
 def escape(text: str) -> str:
     """Make the text safe to use in SVG/HTML.
     """
