@@ -9,7 +9,6 @@ import sys
 
 from puncher.puncher import PunchcardSVG, writepng, writesvg
 
-logging.basicConfig(level = logging.WARN)
 logger = logging.getLogger('puncher')
 
 def _console_message(message : str):
@@ -52,7 +51,10 @@ def main():
     debug_level = os.getenv("PUNCHER_DEBUG",None)
     if debug_level:
         print(f"STDERR Debug logging set to level={debug_level}" , file=sys.stderr)
-        logger.addHandler(StreamHandler(stream=sys.stderr))
+        ch = StreamHandler(stream=sys.stderr)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        ch.setFormatter(formatter)
+        logger.addHandler(ch)
         logger.setLevel(debug_level)
 
     args = parser.parse_args()
@@ -64,7 +66,7 @@ def main():
         content = args.cstring
     _console_message(f"creating punchcard with content: \"{content}\", switches={_switches(args)} ")
      
-    logger.debug(f"puncher with arguments:\n{str(args)}")
+    logger.debug(f"puncher with arguments: {str(args)}")
 
     ps = PunchcardSVG(content)
     svg_content = ps.makesvg(flatten_printed_material=args.flatten,
