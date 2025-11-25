@@ -10,8 +10,15 @@ import base64
 
 # https://homepage.divms.uiowa.edu/~jones/cards/codes.html
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger("PunchcardSVG")
+logger = logging.getLogger("puncher")
+
+def escape(text: str) -> str:
+    """Make the text safe to use in SVG/HTML.
+    """
+    text = text.replace("&", "&amp;")
+    text = text.replace(">", "&gt;")
+    text = text.replace("<", "&lt;")
+    return text
 
 class PunchcardSVG():
     # EIA RS-292 standard punchcard size
@@ -280,13 +287,8 @@ class PunchcardSVG():
         col = PunchcardSVG.CARD_HOLE_COLUMN_NUMBERING.index(columname)
         (x, y) = self._character_cell_location(col, 0)
         (x_center, y_center) = (x + PunchcardSVG.CARD_INCHES_PER_COLUMN / 2.0, y - PunchcardSVG.CARD_INCHES_PER_LINE / 2.0)
-        text = character
-        if character == '&':
-            text = "&amp;"
-        elif character == "<":
-            text = "&lt;"
-        elif character == ">":
-            text = "&gt;"
+        
+        text = escape(character)
 
         # logger.debug(__name__ + f"character is {character} -> {text}")
         return [svg.Text(x=x_center, y=y_center, text=text, class_="cardchar",text_anchor="middle", dominant_baseline="central")]

@@ -1,10 +1,18 @@
 [project]
-name = "punch"
-version = "0.1.0"
-description = "Add your description here"
+name = "puncher"
+version = "0.1.1"
+description = "Punchcard Generator"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "cairosvg>=2.8.2",
     "svg-py>=1.9.2",
 ]
+authors = [
+  {name = "Jonathan Anderson", email = "andersoj@andersoj.org"},
+]
+
+[project.scripts]
+puncher = "puncher.__main__:main"
+
+# Repository = "https://github.com/andersojs/puncher.git"

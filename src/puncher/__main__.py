@@ -1,21 +1,33 @@
 import argparse
 import logging
+from logging import StreamHandler
 import cairosvg
 import io
 from pathlib import Path
+import os
+import sys
 
 from puncher.puncher import PunchcardSVG, writepng, writesvg
 
-logging.basicConfig(level = logging.INFO)
+logging.basicConfig(level = logging.WARN)
 logger = logging.getLogger('puncher')
 
-if __name__ == "__main__":
+def _console_message(message : str):
+    print(f"[\x1b[38;2;0;128;0mPUNCHER\x1b[0m] {message}",file=sys.stderr)
+    logger.info(message)
+
+def _switches(args : argparse.Namespace) -> str:
+    switches = []
+    
+    for switch in ['flatten','cellboundaries','punchboundaries','printpunch']:
+        switches.append( "+" + switch if getattr(args,switch) else "-" + switch )
+    return ','.join(switches)
+
+def _create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog = "puncher.py",
         description = "Punchcard creator utility",
         prefix_chars="+-")
-
-    logger.info("puncher start")
 
     parser.add_argument('--out',required=True)
     parser.add_argument('--form', choices=['svg','png'], action="append", default=['svg'])
@@ -32,16 +44,26 @@ if __name__ == "__main__":
     parser.add_argument("-punchboundaries",action="store_false", help="Don't print all the punch hole location boundaries")
     parser.add_argument("+printpunch",action="store_true", help="Do print boxes for punch holes")
     parser.add_argument("-printpunch",action="store_false", help="Don't print boxes for punch holes")
+    return parser
 
+def main():
+    parser = _create_parser()
+    
+    debug_level = os.getenv("PUNCHER_DEBUG",None)
+    if debug_level:
+        print(f"STDERR Debug logging set to level={debug_level}" , file=sys.stderr)
+        logger.addHandler(StreamHandler(stream=sys.stderr))
+        logger.setLevel(debug_level)
 
     args = parser.parse_args()
 
+    logger.info("puncher start")
     if args.testpattern:
         content = "&-0123456789ABCDEFGHIJKLMNOPQR/STUVWXYZ:#@'=\"[.<(+|]$*);^\\,%_>?"
     else: 
         content = args.cstring
-    logger.info(f"creating punchcard with content: \"{content}\"")
-    
+    _console_message(f"creating punchcard with content: \"{content}\", switches={_switches(args)} ")
+     
     logger.debug(f"puncher with arguments:\n{str(args)}")
 
     ps = PunchcardSVG(content)
@@ -51,7 +73,13 @@ if __name__ == "__main__":
                              print_punchboxes=args.punchboundaries,)
 
     if 'svg' in args.form:
+        _console_message(f"writing SVG to: {args.out}.svg")
         writesvg(svg_content=svg_content,path=Path('.'), stem=args.out)
 
+
     if 'png' in args.form:
+        _console_message(f"writing PNG to: {args.out}.png")
         writepng(svg_content=svg_content,path=Path('.'), stem=args.out)
+
+if __name__ == "__main__":
+    sys.exit(main())
