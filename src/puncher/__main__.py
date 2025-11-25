@@ -72,7 +72,7 @@ def main():
     svg_content = ps.makesvg(flatten_printed_material=args.flatten,
                              print_cellboundaries=args.cellboundaries,
                              print_punchboundaries=args.punchboundaries,
-                             print_punchboxes=args.punchboundaries,)
+                             print_punchboxes=args.printpunch,)
 
     if 'svg' in args.form:
         _console_message(f"writing SVG to: {args.out}.svg")
