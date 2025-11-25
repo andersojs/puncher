@@ -8,7 +8,6 @@ from pathlib import Path
 import os
 import sys
 
-from puncher.puncher import PunchcardSVG, writepng, writesvg
 
 logger = logging.getLogger('puncher')
 colorama.init()
@@ -125,6 +124,7 @@ def main():
      
     logger.debug(f"puncher with arguments: {str(args)}")
 
+    from puncher.puncher import PunchcardSVG, writepng, writesvg
     ps = PunchcardSVG(content)
     svg_content = ps.makesvg(flatten_printed_material=args.flatten,
                              print_cellboundaries=args.cellboundaries,
