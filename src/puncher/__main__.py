@@ -18,8 +18,8 @@ def test_cairosvg() -> bool:
     try:
         import cairosvg
     except OSError as e:
-        print(f"An OS error occurred during import: {e}, please make sure CairoSVG is installed and on the dynamic library path.", file=sys.stderr)
-        print(f"On Mac with cairosvg installed using Homebrew, I need:\nxport DYLD_LIBRARY_PATH=/opt/homebrew/lib", file=sys.stderr)
+        print(f"\nAn OS error occurred during import: {e}, please make sure CairoSVG is installed and on the dynamic library path.", file=sys.stderr)
+        print(f"\n\nOn Mac with cairosvg installed using Homebrew, I need:\nexport DYLD_LIBRARY_PATH=/opt/homebrew/lib", file=sys.stderr)
         # You can add specific handling logic here,
         # such as providing a fallback or logging the error.
         return False
@@ -116,7 +116,6 @@ def main():
 
     if not test_cairosvg():
         _console_message("Failure loading cairosvg library", type='ERROR')
-
 
     logger.info("puncher start")
     if args.testpattern:
