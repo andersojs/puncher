@@ -3,17 +3,36 @@
 This is a utility that creates IBM 80-column punchcards as SVG files.  It takes a string and produces
 a punchcard image in SVG suitable for cutting on a Circut or Sihouette cutting machine.
 
+![Test Pattern](examples/charset.png "Test Pattern Character Set")
+
 ## Usage
 
-    % uv run puncher --help
+    % puncher --help
     usage: puncher.py [-h] --out OUT [--form {svg,png}] (--cstring CSTRING | --testpattern) [+flatten] [-flatten] [+cellboundaries] [-cellboundaries] [+punchboundaries] [-punchboundaries] [+printpunch] [-printpunch]
 
     Punchcard creator utility
 
+    This utility creates an image of an IBM 80-column punchcard, and in SVG output a version suitable
+    to print using a cutting machine like a Cricut or Silhoutte Cameo.
+
+    EXAMPLES:
+
+    Generate the first line of a TLE and output both SVG and PNG forms to iss_tle_1.[png,svg]
+    $ puncher --form svg --form png --out iss_tle_1 \
+      --cstring "1 25544U 98067A   25324.86734766  .00014275  00000-0  26737-3 0  9990"
+
+    Generate the first line of a TLE and output SVG to iss_tle_1.svg, flattening printed material to raster
+    $ puncher --form svg --out iss_tle_1_flat +flatten \
+      --cstring "1 25544U 98067A   25324.86734766  .00014275  00000-0  26737-3 0  9990"
+
+    DEPENDENCIES:
+
+    libcairo2 - puncher needs to be able to find libcairo2 on the library search path.
+
     options:
     -h, --help         show this help message and exit
-    --out OUT
-    --form {svg,png}
+    --out OUT          Output path stem, .svg or .png will be appended depending on --form setting
+    --form {svg,png}   specify output file form(s) and extensions, options are PNG and SVG
     --cstring CSTRING  String to print on the card
     --testpattern      Print a test pattern
     +flatten           Do flatten printed material to a raster image
