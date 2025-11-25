@@ -113,7 +113,8 @@ def main():
     args = parser.parse_args()
 
     if not test_cairosvg():
-        _console_message("Failure loading cairosvg library", type='ERROR')
+        _console_message("Failure loading cairosvg library, bailing out.", type='ERROR')
+        sys.exit(1)
 
     logger.info("puncher start")
     if args.testpattern:
