@@ -25,11 +25,36 @@ def _switches(args : argparse.Namespace) -> str:
 def _create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog = "puncher.py",
-        description = "Punchcard creator utility",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description = """Punchcard creator utility\n\n
+This utility creates an image of an IBM 80-column punchcard, and in SVG output a version suitable
+to print using a cutting machine like a Cricut or Silhoutte Cameo.
+
+EXAMPLES:
+
+  Generate the first line of a TLE and output both SVG and PNG forms to iss_tle_1.[png,svg]
+  $ puncher --form svg --form png --out iss_tle_1 \
+    --cstring "1 25544U 98067A   25324.86734766  .00014275  00000-0  26737-3 0  9990"
+
+  Generate the first line of a TLE and output SVG to iss_tle_1.svg, flattening printed material to raster
+  $ puncher --form svg --out iss_tle_1_flat +flatten \
+    --cstring "1 25544U 98067A   25324.86734766  .00014275  00000-0  26737-3 0  9990"
+
+DEPENDENCIES:
+
+  libcairo2 - puncher needs to be able to find libcairo2 on the library search path.
+
+""",
         prefix_chars="+-")
 
-    parser.add_argument('--out',required=True)
-    parser.add_argument('--form', choices=['svg','png'], action="append", default=['svg'])
+    parser.add_argument('--out',
+                        required=True,
+                        help="Output path stem, .svg or .png will be appended depending on --form setting")
+    parser.add_argument('--form', 
+                        choices=['svg','png'], 
+                        action="append", 
+                        default=['svg'],
+                        help="specify output file form(s) and extensions, options are PNG and SVG")
     
     cg = parser.add_mutually_exclusive_group(required=True)
     cg.add_argument("--cstring", action="store", help="String to print on the card", required=False)
