@@ -3,7 +3,6 @@ import colorama
 from colorama import Fore, Style
 import logging
 from logging import StreamHandler
-import cairosvg
 import io
 from pathlib import Path
 import os
