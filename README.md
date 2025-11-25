@@ -71,6 +71,13 @@ a punchcard image in SVG suitable for cutting on a Circut or Sihouette cutting m
 
 ## Development
 
+Getting started
+    git clone git@github.com:andersojs/puncher.git
+    cd puncher
+    uv sync
+    uv pip install -e .
+    uv run python -m puncher
+
 Build sdist and wheel packages (into `dist/`)
 
     uv build

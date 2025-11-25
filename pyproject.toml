@@ -17,3 +17,6 @@ authors = [
 puncher = "puncher.__main__:main"
 
 # Repository = "https://github.com/andersojs/puncher.git"
+
+[tool.uv]
+tool.uv.package = true
