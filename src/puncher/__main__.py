@@ -1,4 +1,6 @@
 import argparse
+import colorama
+from colorama import Fore, Style
 import logging
 from logging import StreamHandler
 import cairosvg
@@ -10,9 +12,10 @@ import sys
 from puncher.puncher import PunchcardSVG, writepng, writesvg
 
 logger = logging.getLogger('puncher')
+colorama.init()
 
 def _console_message(message : str):
-    print(f"[\x1b[38;2;0;128;0mPUNCHER\x1b[0m] {message}",file=sys.stderr)
+    print("["+Fore.GREEN+"PUNCHER"+Style.RESET_ALL+f"] {message}",file=sys.stderr)
     logger.info(message)
 
 def _switches(args : argparse.Namespace) -> str:

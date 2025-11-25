@@ -8,6 +8,7 @@ import io
 import cairosvg
 import base64
 
+
 # https://homepage.divms.uiowa.edu/~jones/cards/codes.html
 
 logger = logging.getLogger("puncher")
